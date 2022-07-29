@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm 
@@ -6,10 +7,18 @@ from wtforms.validators import InputRequired, Email, Length
 from flask_sqlalchemy  import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-
+    
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://psjcnapyyvpiut:b60a4b24457fc0334328454d668ab7acc35e41d33dac51735920f1e55d78de03@ec2-44-208-88-195.compute-1.amazonaws.com:5432/dejf4e83sch3be'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://psjcnapyyvpiut:b60a4b24457fc0334328454d668ab7acc35e41d33dac51735920f1e55d78de03@ec2-44-208-88-195.compute-1.amazonaws.com:5432/dejf4e83sch3be'
+try:
+    prodURI = os.getenv('DATABASE_URL')
+    prodURI = prodURI.replace("postgres://", "postgresql://")
+    app.config['SQLALCHEMY_DATABASE_URI'] = prodURI
+
+except:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    
 bootstrap = Bootstrap(app)
 db = SQLAlchemy(app)
 login_manager = LoginManager()
