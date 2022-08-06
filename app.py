@@ -30,7 +30,11 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(40), unique=True)
     password = db.Column(db.String(60))
-
+    
+@app.before_first_request
+def create_table():
+    db.create_all()
+    
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
